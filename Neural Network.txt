@@ -1,0 +1,29 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.datasets import mnist
+import matplotlib.pyplot as plt
+
+def train_neural_network():
+    (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+    train_images, test_images = train_images / 255.0, test_images / 255.0
+
+    model = models.Sequential([
+        layers.Flatten(input_shape=(28, 28)),
+        layers.Dense(128, activation='relu'),
+        layers.Dropout(0.2),
+        layers.Dense(10)
+    ])
+
+    model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+    model.fit(train_images, train_labels, epochs=5)
+
+    return model
+
+def evaluate_neural_network(model, test_images, test_labels):
+    test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+    print(f'\nTest accuracy: {test_acc}')
+
+# Example Usage:
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+model = train_neural_network()
+evaluate_neural_network(model, test_images / 255.0, test_labels)
